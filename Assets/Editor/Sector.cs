@@ -62,4 +62,12 @@ public abstract class Sector
 
         return System.Text.Encoding.UTF8.GetString(extract);
     }
+
+    public byte GetByte(ref uint offset)
+    {
+        byte value = m_Data[offset];
+        offset++;
+
+        return value;
+    }
 }
