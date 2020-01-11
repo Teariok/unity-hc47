@@ -65,6 +65,10 @@ public class SPKProcessor
             {
                 sector = new PNAM( sectorId, sectorData );
             }
+            else if( sectorId == "PSCR" )
+            {
+                sector = new PSCR( sectorId, sectorData );
+            }
 
             if( sector != null )
             {
