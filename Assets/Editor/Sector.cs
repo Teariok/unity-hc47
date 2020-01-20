@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using System.IO;
+using System.Reflection;
 using UnityEngine;
 
 public class Sector
@@ -21,13 +22,24 @@ public class Sector
     {
         m_Data = data;
 
+        ReadHeader();
+        ReadMeta();
+        ExtractSubsectors();
+        ReadBody();
+    }
+
+    protected void ReadHeader()
+    {
         m_SectorId = GetString( 4 );
         uint sectorInfo = GetUInt();
 
         m_SectorSize = (sectorInfo & 0x3FFFFFFF);
         m_HasSubsectors = (sectorInfo & (1 << 31)) != 0;
         m_HasMultidata = (sectorInfo & (1 << 30)) != 0;
+    }
 
+    protected void ReadMeta()
+    {
         m_BodySize = m_HasSubsectors || m_HasMultidata ? GetUInt() : 8;
         m_SubsectorCount = m_HasSubsectors ? GetUInt() : 8;
         m_MultidataCount = m_HasMultidata ? GetUInt() : 0;
@@ -40,31 +52,53 @@ public class Sector
                 m_MultidataSizes[i] = GetUInt();
             }
         }
+    }
 
+    protected void ExtractSubsectors()
+    {
         if( m_HasSubsectors )
         {
             m_Subsectors = new Sector[m_SubsectorCount];
             for( uint i = 0; i < m_SubsectorCount; i++ )
             {
-                Sector subsector = new Sector();
+                // Need to peek at the next id in order to construct
+                // the correct type of container for it
+                string nextId = GetString( 4 );
+                m_Data.Position = m_Data.Position - 4;
+
+                Sector subsector = GetSectorContainer( nextId );
                 subsector.Unpack( m_Data );
             }
         }
+    }
 
+    protected void ReadBody()
+    {
         if( m_HasMultidata )
         {
             for( uint i = 0; i < m_MultidataCount; i++ )
             {
                 GetBytes( (int)m_MultidataSizes[i] );
-                // offset += m_MultidataSizes[i];
             }
         }
         else
         {
             uint bodySize = m_SectorSize - m_BodySize;
             GetBytes( (int)bodySize );
-            // offset += bodySize;
         }
+    }
+
+    protected Sector GetSectorContainer( string sectorId )
+    {
+        System.Type type = System.Type.GetType( sectorId );
+        
+        if( type != null )
+        {
+            ConstructorInfo method = type.GetConstructor( new System.Type[] { } );
+            return method.Invoke( null ) as Sector;
+        }
+
+        return new Sector();
     }
 
     public uint GetUInt()
