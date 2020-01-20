@@ -8,7 +8,7 @@ public class PNAM : Sector
 
     protected override void ReadBody()
     {
-        if( m_HasMultidata )
+        if( HasMultidata )
         {
             base.ReadBody();
         }
@@ -16,7 +16,7 @@ public class PNAM : Sector
         {
             m_Entries = new Dictionary<uint, string>();
 
-            uint bodySize = m_SectorSize - m_BodySize;
+            uint bodySize = SectorSize - BodySize;
             uint index = 0;
 
             while( index < bodySize )

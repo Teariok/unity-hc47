@@ -8,15 +8,15 @@ public class Sector
 {
     protected FileStream m_Data;
 
-    protected string m_SectorId;
-    protected uint m_SectorSize;
-    protected bool m_HasSubsectors;
-    protected bool m_HasMultidata;
-    protected uint m_BodySize;
-    protected uint m_SubsectorCount;
-    protected uint m_MultidataCount;
-    protected uint[] m_MultidataSizes;
-    protected Sector[] m_Subsectors;
+    public string SectorId { get; protected set; }
+    public uint SectorSize { get; protected set; }
+    public bool HasSubsectors { get; protected set; }
+    public bool HasMultidata { get; protected set; }
+    public uint BodySize { get; protected set; }
+    public uint SubsectorCount { get; protected set; }
+    public uint MultidataCount { get; protected set; }
+    public uint[] MultidataSizes { get; protected set; }
+    public Sector[] Subsectors { get; protected set; }
 
     public virtual void Unpack( FileStream data )
     {
@@ -28,38 +28,38 @@ public class Sector
         ReadBody();
     }
 
-    protected void ReadHeader()
+    protected virtual void ReadHeader()
     {
-        m_SectorId = GetString( 4 );
+        SectorId = GetString( 4 );
         uint sectorInfo = GetUInt();
 
-        m_SectorSize = (sectorInfo & 0x3FFFFFFF);
-        m_HasSubsectors = (sectorInfo & (1 << 31)) != 0;
-        m_HasMultidata = (sectorInfo & (1 << 30)) != 0;
+        SectorSize = (sectorInfo & 0x3FFFFFFF);
+        HasSubsectors = (sectorInfo & (1 << 31)) != 0;
+        HasMultidata = (sectorInfo & (1 << 30)) != 0;
     }
 
     protected void ReadMeta()
     {
-        m_BodySize = m_HasSubsectors || m_HasMultidata ? GetUInt() : 8;
-        m_SubsectorCount = m_HasSubsectors ? GetUInt() : 8;
-        m_MultidataCount = m_HasMultidata ? GetUInt() : 0;
+        BodySize = HasSubsectors || HasMultidata ? GetUInt() : 8;
+        SubsectorCount = HasSubsectors ? GetUInt() : 8;
+        MultidataCount = HasMultidata ? GetUInt() : 0;
 
-        if( m_HasMultidata )
+        if( HasMultidata )
         {
-            m_MultidataSizes = new uint[m_MultidataCount];
-            for( uint i = 0; i < m_MultidataCount; i++ )
+            MultidataSizes = new uint[MultidataCount];
+            for( uint i = 0; i < MultidataCount; i++ )
             {
-                m_MultidataSizes[i] = GetUInt();
+                MultidataSizes[i] = GetUInt();
             }
         }
     }
 
-    protected void ExtractSubsectors()
+    protected  virtual void ExtractSubsectors()
     {
-        if( m_HasSubsectors )
+        if( HasSubsectors )
         {
-            m_Subsectors = new Sector[m_SubsectorCount];
-            for( uint i = 0; i < m_SubsectorCount; i++ )
+            Subsectors = new Sector[SubsectorCount];
+            for( uint i = 0; i < SubsectorCount; i++ )
             {
                 // Need to peek at the next id in order to construct
                 // the correct type of container for it
@@ -74,18 +74,35 @@ public class Sector
 
     protected virtual void ReadBody()
     {
-        if( m_HasMultidata )
+        if( HasMultidata )
         {
-            for( uint i = 0; i < m_MultidataCount; i++ )
+            for( uint i = 0; i < MultidataCount; i++ )
             {
-                GetBytes( (int)m_MultidataSizes[i] );
+                GetBytes( (int)MultidataSizes[i] );
             }
         }
         else
         {
-            uint bodySize = m_SectorSize - m_BodySize;
+            uint bodySize = SectorSize - BodySize;
             GetBytes( (int)bodySize );
         }
+    }
+
+    public Sector GetSubsector( string sectorId )
+    {
+        if( HasSubsectors )
+        {
+            foreach( Sector subsector in Subsectors )
+            {
+                Sector foundSector = subsector.SectorId.Equals( sectorId ) ? subsector : subsector.GetSubsector( SectorId );
+                if( foundSector != null )
+                {
+                    return foundSector;
+                }
+            }
+        }
+
+        return null;
     }
 
     protected Sector GetSectorContainer( string sectorId )

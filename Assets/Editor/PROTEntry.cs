@@ -2,8 +2,22 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class PROT : Sector
+public class PROTEntry : Sector
 {
+    public uint PheaOffset { get; protected set; }
+
+    protected override void ReadHeader()
+    {
+        PheaOffset = GetUInt();
+        SectorId = PheaOffset.ToString();
+
+        uint sectorInfo = GetUInt();
+
+        SectorSize = (sectorInfo & 0x3FFFFFFF);
+        HasSubsectors = (sectorInfo & (1 << 31)) != 0;
+        HasMultidata = (sectorInfo & (1 << 30)) != 0;
+    }
+
     protected override void ExtractSubsectors()
     {
         if( HasSubsectors )
