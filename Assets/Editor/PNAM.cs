@@ -6,12 +6,13 @@ public class PNAM : Sector
 {
     private Dictionary<uint, string> m_Entries;
 
-    public PNAM( string name, byte[] data ) : base( name, data )
+    /* override void Unpack( ref uint offset, byte[] data )
     {
-        uint offset = 0;
+        base.Unpack( ref offset, data );
+
         m_Entries = new Dictionary<uint, string>();
 
-        while( offset < GetDataSize() )
+        while( offset < m_BodySize )
         {
             uint start = offset;
             string entry = GetString( ref offset );
@@ -20,5 +21,5 @@ public class PNAM : Sector
 
             Debug.Log( "NAME: " + start + " - " + entry );
         }
-    }
+    }*/
 }

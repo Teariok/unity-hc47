@@ -15,9 +15,9 @@ public class PROT : Sector
 
     private PROTEntry[] m_Entries;
 
-    public PROT( string name, byte[] data ) : base( name, data )
+    /*public override void Unpack( ref uint offset, byte[] data )
     {
-        uint offset = 0;
+        base.Unpack( ref offset, data );
         
         uint size = GetUInt( ref offset );
         uint rootCount = GetUInt( ref offset );
@@ -29,9 +29,9 @@ public class PROT : Sector
             Debug.Log( "Root Node " + rn );
             PROTEntry entry = extractPROT( ref offset );
         }
-    }
+    }*/
 
-    private PROTEntry extractPROT( ref uint offset )
+    /*private PROTEntry extractPROT( ref uint offset )
     {
         PROTEntry entry = new PROTEntry();
 
@@ -56,5 +56,5 @@ public class PROT : Sector
         Debug.Log( "PROT Node Count: " + entry.nodeCount );
 
         return entry;
-    }
+    }*/
 }

@@ -11,9 +11,9 @@ public class PSCR : Sector
         ARRAY = 38
     };
 
-    public PSCR( string name, byte[] data ) : base( name, data )
+    /*public override void Unpack( ref uint offset, byte[] data )
     {
-        uint offset = 0;
+        base.Unpack( ref offset, data );
 
         // Unknown 1 for HK is 1056964608 so probably some kind of flag field or mask, it's bits 24-29 on and the rest off (3F00 0000).
         // That places it just outside the range for the mask 0x00FFFFFF.
@@ -26,6 +26,11 @@ public class PSCR : Sector
         Debug.Log( "PSCR Data Size: " + dataSize );
         Debug.Log( "Script Unknown 2: " + unknown1 );
         Debug.Log( "Script Count: " + scriptCount );
+
+        if( scriptCount == 0 )
+        {
+            return;
+        }
 
         // The next set of data seems like compiled sdl scripts.
         // They seem to start with the script name.
@@ -263,5 +268,5 @@ public class PSCR : Sector
 
             Debug.Log( "Variable: " + valueName );
         }
-    }
+    }*/
 }

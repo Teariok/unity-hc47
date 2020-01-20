@@ -26,12 +26,13 @@ public class PHEA : Sector
 
     private Dictionary<uint, PHEAEntry> m_Entries;
 
-    public PHEA( string name, byte[] data ) : base( name, data )
+    /*public override void Unpack( FileStream data )
     {
-        uint offset = 0;
+        base.Unpack( data );
+
         m_Entries = new Dictionary<uint, PHEAEntry>();
 
-        while( offset < GetDataSize() )
+        while( offset < m_BodySize )
         {
             uint index = offset;
             PHEAEntry entry = new PHEAEntry()
@@ -63,5 +64,5 @@ public class PHEA : Sector
 
             m_Entries.Add(index, entry);
         }
-    }
+    }*/
 }
