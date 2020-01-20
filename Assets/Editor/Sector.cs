@@ -72,7 +72,7 @@ public class Sector
         }
     }
 
-    protected void ReadBody()
+    protected virtual void ReadBody()
     {
         if( m_HasMultidata )
         {

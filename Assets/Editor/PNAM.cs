@@ -6,20 +6,37 @@ public class PNAM : Sector
 {
     private Dictionary<uint, string> m_Entries;
 
-    /* override void Unpack( ref uint offset, byte[] data )
+    protected override void ReadBody()
     {
-        base.Unpack( ref offset, data );
-
-        m_Entries = new Dictionary<uint, string>();
-
-        while( offset < m_BodySize )
+        if( m_HasMultidata )
         {
-            uint start = offset;
-            string entry = GetString( ref offset );
-            
-            m_Entries.Add( start, entry );
-
-            Debug.Log( "NAME: " + start + " - " + entry );
+            base.ReadBody();
         }
-    }*/
+        else
+        {
+            m_Entries = new Dictionary<uint, string>();
+
+            uint bodySize = m_SectorSize - m_BodySize;
+            uint index = 0;
+
+            while( index < bodySize )
+            {
+                string entry = GetString();
+                m_Entries.Add( index, entry );
+                Debug.Log( index + " - " + entry );
+
+                index += (uint)entry.Length + 1;
+            }
+        }
+    }
+
+    public string GetName( uint index )
+    {
+        if( m_Entries.ContainsKey( index ) )
+        {
+            return m_Entries[index];
+        }
+
+        return string.Empty;
+    }
 }
