@@ -142,6 +142,14 @@ public class Sector
         return System.BitConverter.ToUInt16( GetBytes( SIZE ), 0);
     }
 
+    public float GetFloat()
+    {
+        const int SIZE = 4;
+        byte[] data = GetBytes( SIZE );
+        double value = System.BitConverter.ToSingle( data, 0 );
+        return (float)value;
+    }
+
     public string GetString( uint size = 0 )
     {
         if( size > 0 )

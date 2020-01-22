@@ -42,17 +42,21 @@ public class SPKProcessor
     {
         PHEA phea = (PHEA)rootSector.GetSubsector( "PHEA" );
         PNAM pnam = (PNAM)rootSector.GetSubsector( "PNAM" );
+        PPOS ppos = (PPOS)rootSector.GetSubsector( "PPOS" );
 
         foreach( PROTEntry entry in collection )
         {
+            GameObject root = GameObject.CreatePrimitive( PrimitiveType.Sphere ); //new GameObject( entry.SectorId );
+            root.name = entry.SectorId;
+            
             PHEA.PHEAEntry? pheaData = phea.GetEntry( entry.PheaOffset );
-            string objectName = entry.SectorId;
             if( pheaData.HasValue )
             {
-                objectName = pnam.GetName( pheaData.Value.PnamIndex ) + " {" + pheaData.Value.Info + "}";
+                root.name = pnam.GetName( pheaData.Value.PnamIndex );
+                root.transform.position = ppos.GetPosition( pheaData.Value.PosIndex );
             }
 
-            GameObject root = new GameObject( objectName );
+            
             root.transform.SetParent( parent.transform );
 
             if( entry.HasSubsectors )
