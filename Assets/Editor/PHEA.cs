@@ -70,13 +70,13 @@ public class PHEA : Sector
 
                 if( (entry.Info & 0x80) != 0 )
                 {
-                    GetUInt();
-                    GetUInt();
-                    GetUInt();
-                    GetUInt();
-                    GetUInt();
-                    GetUInt();
-                    GetUInt();
+                    uint lightUnknown1 = GetUInt();
+                    uint lightUnknown2 = GetUInt();
+                    uint lightUnknown3 = GetUInt();
+                    uint lightUnknown4 = GetUInt();
+                    uint lightUnknown5 = GetUInt();
+                    uint lightUnknown6 = GetUInt();
+                    entry.flags = GetUInt();
                 }
 
                 m_Entries.Add( index, entry );
