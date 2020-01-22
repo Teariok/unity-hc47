@@ -23,7 +23,6 @@ public class PNAM : Sector
             {
                 string entry = GetString();
                 m_Entries.Add( index, entry );
-                Debug.Log( index + " - " + entry );
 
                 index += (uint)entry.Length + 1;
             }
