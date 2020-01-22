@@ -13,6 +13,8 @@ public class PROT : Sector
             {
                 PROTEntry subsector = new PROTEntry();
                 subsector.Unpack( m_Data );
+
+                Subsectors[i] = subsector;
             }
         }
     }

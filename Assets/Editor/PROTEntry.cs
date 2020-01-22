@@ -8,7 +8,7 @@ public class PROTEntry : Sector
 
     protected override void ReadHeader()
     {
-        PheaOffset = GetUInt();
+        PheaOffset = GetUInt() & 0xFFFFFF;
         SectorId = PheaOffset.ToString();
 
         uint sectorInfo = GetUInt();
@@ -27,6 +27,8 @@ public class PROTEntry : Sector
             {
                 PROTEntry subsector = new PROTEntry();
                 subsector.Unpack( m_Data );
+
+                Subsectors[i] = subsector;
             }
         }
     }
