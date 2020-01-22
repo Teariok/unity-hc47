@@ -36,6 +36,8 @@ public class Sector
         SectorSize = (sectorInfo & 0x3FFFFFFF);
         HasSubsectors = (sectorInfo & (1 << 31)) != 0;
         HasMultidata = (sectorInfo & (1 << 30)) != 0;
+
+        // Debug.Log( SectorId + " - Sub: " + HasSubsectors + ", Multi: " + HasMultidata );
     }
 
     protected void ReadMeta()
@@ -68,6 +70,8 @@ public class Sector
 
                 Sector subsector = GetSectorContainer( nextId );
                 subsector.Unpack( m_Data );
+
+                Subsectors[i] = subsector;
             }
         }
     }
@@ -94,7 +98,15 @@ public class Sector
         {
             foreach( Sector subsector in Subsectors )
             {
-                Sector foundSector = subsector.SectorId.Equals( sectorId ) ? subsector : subsector.GetSubsector( SectorId );
+                if( subsector.SectorId.Equals( sectorId ) )
+                {
+                    return subsector;
+                }
+            }
+
+            foreach( Sector subsector in Subsectors )
+            {
+                Sector foundSector = subsector.GetSubsector( SectorId );
                 if( foundSector != null )
                 {
                     return foundSector;
