@@ -6,63 +6,91 @@ public class PHEA : Sector
 {
     public struct PHEAEntry
     {
-        public uint unknown1;
-        public uint exc;
-        public uint pnamIndex;
+        public uint PdblIndex;
+        public uint PexcIndex;
+        public uint PnamIndex;
+        public uint MtxIndex; // ( * 4 ? )
+        public uint PosIndex;
+        public ushort unknown1;
+        public ushort Info;
+        public uint VertexIndex;
+        public uint QuadIndex;
+        public uint TextureIndex;
+        public uint FtxIndex;
+        public uint VertexCount;
+        public uint QuadCount;
+        public uint FtxCount;
         public uint unknown2;
-        public uint unknown3;
-        public ushort unknown4;
-        public ushort size;
-        public uint vertexOffset;
-        public uint quaternionOffset;
-        public uint textureOffset;
-        public uint faceOffset;
-        public uint vertexCount;
-        public uint quaternionCount;
-        public uint textureCount;
-        public uint unknown5;
         public uint flags;
     }
 
     private Dictionary<uint, PHEAEntry> m_Entries;
 
-    /*public override void Unpack( FileStream data )
+    protected override void ReadBody()
     {
-        base.Unpack( data );
-
-        m_Entries = new Dictionary<uint, PHEAEntry>();
-
-        while( offset < m_BodySize )
+        if( HasMultidata )
         {
-            uint index = offset;
-            PHEAEntry entry = new PHEAEntry()
-            {
-                unknown1 = GetUInt(ref offset),
-                exc = GetUInt(ref offset),
-                pnamIndex = GetUInt(ref offset),
-                unknown2 = GetUInt(ref offset),
-                unknown3 = GetUInt(ref offset),
-                unknown4 = GetUInt16(ref offset),
-                size = GetUInt16(ref offset)
-            };
-
-            Debug.Log("Name Offset: " + entry.pnamIndex);
-            Debug.Log("Size: " + entry.size);
-
-            if( entry.size == 32 )
-            {
-                entry.vertexOffset = GetUInt(ref offset);
-                entry.quaternionOffset = GetUInt(ref offset);
-                entry.textureOffset = GetUInt(ref offset);
-                entry.faceOffset = GetUInt(ref offset);
-                entry.vertexCount = GetUInt(ref offset);
-                entry.quaternionCount = GetUInt(ref offset);
-                entry.textureCount = GetUInt(ref offset);
-                entry.unknown5 = GetUInt(ref offset);
-                entry.flags = GetUInt(ref offset);
-            }
-
-            m_Entries.Add(index, entry);
+            base.ReadBody();
         }
-    }*/
+        else
+        {
+            m_Entries = new Dictionary<uint, PHEAEntry>();
+
+            uint bodySize = SectorSize - BodySize;
+            long start = m_Data.Position;
+
+            while( m_Data.Position - start < bodySize )
+            {
+                long lindex = m_Data.Position - start;
+                uint index = (uint)(m_Data.Position - start);
+
+                PHEAEntry entry = new PHEAEntry()
+                {
+                    PdblIndex = GetUInt(),
+                    PexcIndex = GetUInt(),
+                    PnamIndex = GetUInt(),
+                    MtxIndex = GetUInt(),
+                    PosIndex = GetUInt(),
+                    unknown1 = GetUInt16(),
+                    Info = GetUInt16()
+                };
+
+                if( (entry.Info & (0x20|0x400)) != 0 )
+                {
+                    entry.VertexIndex = GetUInt();
+                    entry.QuadIndex = GetUInt();
+                    entry.TextureIndex = GetUInt();
+                    entry.FtxIndex = GetUInt();
+                    entry.VertexCount = GetUInt();
+                    entry.QuadCount = GetUInt();
+                    entry.FtxCount = GetUInt();
+                    entry.unknown2 = GetUInt();
+                    entry.flags = GetUInt();
+                }
+
+                if( (entry.Info & 0x80) != 0 )
+                {
+                    GetUInt();
+                    GetUInt();
+                    GetUInt();
+                    GetUInt();
+                    GetUInt();
+                    GetUInt();
+                    GetUInt();
+                }
+
+                m_Entries.Add( index, entry );
+            }
+        }
+    }
+
+    public PHEAEntry? GetEntry( uint index )
+    {
+        if( m_Entries.ContainsKey( index ) )
+        {
+            return m_Entries[index];
+        }
+
+        return null;
+    }
 }
