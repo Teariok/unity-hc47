@@ -15,11 +15,11 @@ public class PHEA : Sector
         public ushort Info;
         public uint VertexIndex;
         public uint QuadIndex;
-        public uint TextureIndex;
+        public uint TriangleIndex;
         public uint FtxIndex;
         public uint VertexCount;
         public uint QuadCount;
-        public uint FtxCount;
+        public uint TriangleCount;
         public uint unknown2;
         public uint flags;
     }
@@ -59,11 +59,11 @@ public class PHEA : Sector
                 {
                     entry.VertexIndex = GetUInt();
                     entry.QuadIndex = GetUInt();
-                    entry.TextureIndex = GetUInt();
+                    entry.TriangleIndex = GetUInt();
                     entry.FtxIndex = GetUInt();
                     entry.VertexCount = GetUInt();
                     entry.QuadCount = GetUInt();
-                    entry.FtxCount = GetUInt();
+                    entry.TriangleCount = GetUInt();
                     entry.unknown2 = GetUInt();
                     entry.flags = GetUInt();
                 }
