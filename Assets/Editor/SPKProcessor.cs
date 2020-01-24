@@ -96,12 +96,12 @@ public class SPKProcessor
             }
 
             indices.Add( t );
-            indices.Add( t + 1 );
             indices.Add( t + 2 );
+            indices.Add( t + 1 );
 
             indices.Add( t );
-            indices.Add( t + 2 );
             indices.Add( t + 3 );
+            indices.Add( t + 2 );
 
             t += 4;
         }
@@ -117,13 +117,17 @@ public class SPKProcessor
                 ushort vertDP = (ushort)(vertOP / 2);
 
                 verts.Add( pver.GetVertex( pheaData.VertexIndex + vertDP ) );
-                indices.Add( t+g );
-                g++;
             }
+
+            indices.Add( t + g );
+            indices.Add( t + g + 2 );
+            indices.Add( t + g + 1 );
+            g += 3;
         }
 
         mesh.vertices = verts.ToArray();
         mesh.triangles = indices.ToArray();
+        mesh.RecalculateNormals();
 
         return mesh;
     }
