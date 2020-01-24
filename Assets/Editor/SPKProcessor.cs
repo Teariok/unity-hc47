@@ -92,11 +92,7 @@ public class SPKProcessor
                 ushort vertOP = (ushort)(offsVal * 3);
                 ushort vertDP = (ushort)(vertOP / 2);
 
-                float x = pver.GetFloat( (int)(pheaData.VertexIndex + vertDP) );
-                float y = pver.GetFloat( (int)(pheaData.VertexIndex + vertDP + 1) );
-                float z = pver.GetFloat( (int)(pheaData.VertexIndex + vertDP + 2) );
-
-                verts.Add( new Vector3( x, y, z ) );
+                verts.Add( pver.GetVertex( pheaData.VertexIndex + vertDP ) );
             }
 
             indices.Add( t );
@@ -120,11 +116,7 @@ public class SPKProcessor
                 ushort vertOP = (ushort)(offsVal * 3);
                 ushort vertDP = (ushort)(vertOP / 2);
 
-                float x = pver.GetFloat( (int)(pheaData.VertexIndex + vertDP) );
-                float y = pver.GetFloat( (int)(pheaData.VertexIndex + vertDP + 1) );
-                float z = pver.GetFloat( (int)(pheaData.VertexIndex + vertDP + 2) );
-
-                verts.Add( new Vector3( x, y, z ) );
+                verts.Add( pver.GetVertex( pheaData.VertexIndex + vertDP ) );
                 indices.Add( t+g );
                 g++;
             }
