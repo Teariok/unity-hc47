@@ -121,7 +121,7 @@ namespace HitmanTools
 
         protected Sector GetSectorContainer( string sectorId )
         {
-            System.Type type = System.Type.GetType( sectorId );
+            System.Type type = System.Type.GetType( "HitmanTools." + sectorId );
 
             if( type != null )
             {
